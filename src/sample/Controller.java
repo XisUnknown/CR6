@@ -53,12 +53,10 @@ public class Controller {
         ResultSet rs;
         rs = stmt.executeQuery("SELECT teacherID,name,surname,email FROM teacher WHERE name LIKE ('"+nameSplit[1]+"') AND surname LIKE ('"+nameSplit[0]+"')");
         while (rs.next()) {
-
             name.setText(rs.getString("name"));
             surname.setText(rs.getString("surname"));
             email.setText(rs.getString("email"));
             idText.setText(rs.getString("teacherID"));
-            //System.out.println(rs.getString("teacherID"));
         }
         //rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE name LIKE ('"+nameSplit[1]+"') AND surname LIKE ('"+nameSplit[0]+"')");
         rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE t.teacherID ="+idText.getText());
@@ -80,7 +78,30 @@ public class Controller {
             buff = resultset.getString("surname")+", "+resultset.getString("name");
             teachersList.add(buff);
         }
-
+        teachers.setItems(teachersList);
+        teachers.refresh();
+    }
+    public void deleteTeacher() throws SQLException {
+        teachers.getItems().clear();
+        stmt = con.createStatement();
+        stmt.execute("DELETE FROM `teacher` WHERE teacherID = "+idText.getText());
+        resultset = stmt.executeQuery("SELECT name,surname FROM teacher WHERE 1");
+        while (resultset.next()) {
+            buff = resultset.getString("surname")+", "+resultset.getString("name");
+            teachersList.add(buff);
+        }
+        teachers.setItems(teachersList);
+        teachers.refresh();
+    }
+    public void updateTeacher() throws SQLException {
+        teachers.getItems().clear();
+        stmt = con.createStatement();
+        stmt.execute("UPDATE `teacher` SET `name`='"+name.getText()+"',`surname`='"+surname.getText()+"',`email`='"+email.getText()+"' WHERE teacherID = "+idText.getText());
+        resultset = stmt.executeQuery("SELECT name,surname FROM teacher WHERE 1");
+        while (resultset.next()) {
+            buff = resultset.getString("surname")+", "+resultset.getString("name");
+            teachersList.add(buff);
+        }
         teachers.setItems(teachersList);
         teachers.refresh();
     }
