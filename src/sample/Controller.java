@@ -27,11 +27,9 @@ public class Controller {
     @FXML
     public void initialize() throws SQLException {
         classes.getColumns().add(classesCol);
-        //con = DriverManager.getConnection("jdbc:mysql://localhost:3306/school?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin");
         con = DriverManager.getConnection("jdbc:mysql://localhost:3306/school?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin", "root","");
         stmt = con.createStatement();
         resultset = stmt.executeQuery("SELECT name,surname FROM teacher WHERE 1");
-        //resultset = stmt.executeQuery("SELECT t.teacherID,c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE 1");
         teachers.getColumns().add(teachersCol);
         teachersCol.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
         while (resultset.next()) {
@@ -57,9 +55,7 @@ public class Controller {
             surname.setText(rs.getString("surname"));
             email.setText(rs.getString("email"));
             idText.setText(rs.getString("teacherID"));
-            //buff = resultset.getString("surname")+", "+resultset.getString("name");
             System.out.println(rs.getString("teacherID"));
-            //teachersList.add(buff);
         }
         rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE name LIKE ('"+nameSplit[1]+"') AND surname LIKE ('"+nameSplit[0]+"')");
         classesCol.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
@@ -67,7 +63,6 @@ public class Controller {
             buff = rs.getString("c.class");
             System.out.println(buff);
             classesList.add(buff);
-            //teachersList.add(buff);
         }
         classes.setItems(classesList);
         classes.refresh();
