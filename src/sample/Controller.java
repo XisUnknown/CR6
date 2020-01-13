@@ -9,6 +9,9 @@ import javafx.scene.control.*;
 import java.sql.*;
 
 public class Controller {
+    @FXML private Button deleteButton;
+    @FXML private Button addButton;
+    @FXML private Button updateButton;
     @FXML private TableView teachers;
     @FXML private TableView classes;
     @FXML private TextField name;
@@ -34,7 +37,7 @@ public class Controller {
         teachersCol.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
         while (resultset.next()) {
             buff = resultset.getString("surname")+", "+resultset.getString("name");
-            System.out.println(buff);
+                System.out.println(buff);
             teachersList.add(buff);
         }
         teachers.getItems().clear();
@@ -55,9 +58,10 @@ public class Controller {
             surname.setText(rs.getString("surname"));
             email.setText(rs.getString("email"));
             idText.setText(rs.getString("teacherID"));
-            System.out.println(rs.getString("teacherID"));
+            //System.out.println(rs.getString("teacherID"));
         }
-        rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE name LIKE ('"+nameSplit[1]+"') AND surname LIKE ('"+nameSplit[0]+"')");
+        //rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE name LIKE ('"+nameSplit[1]+"') AND surname LIKE ('"+nameSplit[0]+"')");
+        rs = stmt.executeQuery("SELECT c.class FROM teacher t INNER JOIN teacherclass tc ON t.teacherID = tc.teacherID INNER JOIN class c ON c.classID=tc.classID WHERE t.teacherID ="+idText.getText());
         classesCol.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
         while (rs.next()) {
             buff = rs.getString("c.class");
@@ -66,5 +70,18 @@ public class Controller {
         }
         classes.setItems(classesList);
         classes.refresh();
+    }
+    public void addTeacher() throws SQLException {
+        stmt = con.createStatement();
+        stmt.execute("INSERT INTO `teacher`(`name`, `surname`, `email`) VALUES ('"+name.getText()+"', '"+surname.getText()+"', '"+email.getText()+"')");
+        teachers.getItems().clear();
+        resultset = stmt.executeQuery("SELECT name,surname FROM teacher WHERE 1");
+        while (resultset.next()) {
+            buff = resultset.getString("surname")+", "+resultset.getString("name");
+            teachersList.add(buff);
+        }
+
+        teachers.setItems(teachersList);
+        teachers.refresh();
     }
 }
